@@ -1,9 +1,9 @@
-import { ColorfulClock } from "./components/ColorfulClock";
+import { Calculator } from "./components/Calculator";
 
 export default function App() {
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-950 p-4">
-      <ColorfulClock />
-    </main>
+    <div className="min-h-screen flex items-center justify-center bg-slate-100 p-4">
+      <Calculator />
+    </div>
   );
 }
