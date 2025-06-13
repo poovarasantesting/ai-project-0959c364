@@ -1,13 +1,12 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Blog from "./pages/Blog";
+import { AuthForm } from "./components/auth/AuthForm";
+import { Toaster } from "./components/ui/toaster";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Blog />} />
-      </Routes>
-    </BrowserRouter>
+    <main>
+      <Toaster />
+      <AuthForm />
+    </main>
   );
 }
 
