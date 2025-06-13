@@ -1,18 +1,13 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Toaster } from "@/components/ui/toaster";
-import Register from "./pages/Register";
-import Login from "./pages/Login";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Clock } from "./components/Clock";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<div>Home Page</div>} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login />} />
-      </Routes>
-      <Toaster />
-    </BrowserRouter>
+    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+      <main className="container mx-auto p-4 flex min-h-screen items-center justify-center">
+        <Clock />
+      </main>
+    </ThemeProvider>
   );
 }
 
