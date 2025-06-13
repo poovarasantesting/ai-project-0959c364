@@ -1,9 +1,9 @@
-import { DigitalClock } from "./components/DigitalClock";
+import { ColorfulClock } from "./components/ColorfulClock";
 
 export default function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-100">
-      <DigitalClock />
-    </div>
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-800 to-slate-950 p-4">
+      <ColorfulClock />
+    </main>
   );
 }
