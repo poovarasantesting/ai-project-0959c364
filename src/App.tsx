@@ -1,19 +1,19 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { Toaster } from "sonner";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Toaster } from "@/components/ui/toaster";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
 
-export default function App() {
+function App() {
   return (
     <BrowserRouter>
-      <Toaster position="top-center" richColors />
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<div>Home Page</div>} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
+      <Toaster />
     </BrowserRouter>
   );
 }
+
+export default App;

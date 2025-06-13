@@ -1,53 +1,87 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "sonner";
-import { Eye, EyeOff } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
+
+const loginSchema = z.object({
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(1, "Password is required"),
+});
 
 export default function Login() {
-  const [credentials, setCredentials] = useState({
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setCredentials((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    // Clear error when user starts typing
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-
-    // Validate form
-    if (!credentials.email || !credentials.password) {
-      toast.error("Please enter both email and password");
+    
+    try {
+      // Validate form data
+      loginSchema.parse(formData);
+      
+      // In a real app, you would make an API call here
+      console.log("Logging in user:", formData);
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Show success message
+      toast({
+        title: "Login successful!",
+        description: "Welcome back!",
+      });
+      
+      // Redirect to dashboard (or home page)
+      navigate("/");
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        // Format validation errors
+        const newErrors: Record<string, string> = {};
+        error.errors.forEach((err) => {
+          if (err.path[0]) {
+            newErrors[err.path[0] as string] = err.message;
+          }
+        });
+        setErrors(newErrors);
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Login failed",
+          description: "Invalid email or password.",
+        });
+      }
+    } finally {
       setIsLoading(false);
-      return;
     }
-
-    // Simulate API call
-    setTimeout(() => {
-      console.log("Login attempt:", credentials);
-      toast.success("Login successful!");
-      setIsLoading(false);
-      navigate("/dashboard");
-    }, 1500);
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+    <div className="flex justify-center items-center min-h-screen p-4 bg-gray-50">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-center text-2xl font-bold">Sign in to your account</CardTitle>
+          <CardTitle className="text-2xl text-center">Welcome Back</CardTitle>
           <CardDescription className="text-center">
-            Enter your credentials to access your account
+            Enter your credentials to log in
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
@@ -58,53 +92,51 @@ export default function Login() {
                 id="email"
                 name="email"
                 type="email"
-                autoComplete="email"
-                required
-                value={credentials.email}
+                value={formData.email}
                 onChange={handleChange}
                 placeholder="john.doe@example.com"
+                autoComplete="email"
               />
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email}</p>
+              )}
             </div>
+            
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                <Link to="/forgot-password" className="text-sm font-medium text-primary hover:underline">
-                  Forgot password?
-                </Link>
-              </div>
-              <div className="relative">
-                <Input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  autoComplete="current-password"
-                  required
-                  value={credentials.password}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                />
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-0 top-0 h-full px-3 py-2 text-gray-400 hover:text-gray-500"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </Button>
-              </div>
+              <Label htmlFor="password">Password</Label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="••••••••"
+                autoComplete="current-password"
+              />
+              {errors.password && (
+                <p className="text-sm text-red-500">{errors.password}</p>
+              )}
             </div>
           </CardContent>
+          
           <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Signing in..." : "Sign in"}
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={isLoading}
+            >
+              {isLoading ? "Logging in..." : "Log in"}
             </Button>
-            <p className="text-center text-sm text-gray-600">
+            
+            <div className="text-center text-sm">
               Don't have an account?{" "}
-              <Link to="/register" className="font-medium text-primary hover:underline">
-                Register
+              <Link 
+                to="/register" 
+                className="text-blue-600 hover:text-blue-800 font-medium"
+              >
+                Create an account
               </Link>
-            </p>
+            </div>
           </CardFooter>
         </form>
       </Card>
