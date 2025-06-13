@@ -1,16 +1,12 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Toaster } from "@/components/ui/toaster";
-import Login from "./pages/Login";
+import Blog from "./pages/Blog";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/login" element={<Login />} />
-        {/* Add other routes as needed */}
+        <Route path="/" element={<Blog />} />
       </Routes>
-      <Toaster />
     </BrowserRouter>
   );
 }
